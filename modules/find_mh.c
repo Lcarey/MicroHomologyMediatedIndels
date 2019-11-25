@@ -256,7 +256,7 @@ void add_KHash_PairsTab(KHash h, int v, long p, PairsTab pt) {
 void print_PairsTab(PairsTab pt, FILE * f , char sname[255] ) {
     PairsTab_record r;
     for ( r = pt->rec ; r ; r = r->next ) {
-        fprintf(f, "%s\t%ld\t%ld\t%d\n", sname ,  r->pos - r->ind, r->pos, r->len);
+        fprintf(f, "%ld\t%ld\t%d\t%s\n", r->pos - r->ind, r->pos, r->len , sname );
         // printf("%10ld%10d%10d\n", r->pos, r->ind, r->len); // debug
     }
 }
