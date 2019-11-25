@@ -4,9 +4,9 @@
 
 //// 开始定义常数
 #define SK       4
-#define MK       12
+#define MK       25
 #define HSize    256 // 0000(4) ~ 3333(4)
-#define MAXINTVL 100 // 最大区间 100 bps
+#define MAXINTVL 500 // 最大区间 100 bps
 #define MININTVL 3   // 最小区间 3 + SK bps
 #define AAAA     0
 #define CCCC     85
@@ -253,10 +253,10 @@ void add_KHash_PairsTab(KHash h, int v, long p, PairsTab pt) {
 //     putchar('\n');
 // }
 //// 用来输出结果
-void print_PairsTab(PairsTab pt, FILE * f) {
+void print_PairsTab(PairsTab pt, FILE * f , char sname[255] ) {
     PairsTab_record r;
     for ( r = pt->rec ; r ; r = r->next ) {
-        fprintf(f, "%ld\t%ld\t%d\n", r->pos - r->ind, r->pos, r->len);
+        fprintf(f, "%s\t%ld\t%ld\t%d\n", sname ,  r->pos - r->ind, r->pos, r->len);
         // printf("%10ld%10d%10d\n", r->pos, r->ind, r->len); // debug
     }
 }
@@ -288,7 +288,7 @@ int main(int argc, char * argv[]) {
                     if (ns > 0) {                   // 如果 序列数已经大于 1 那么
                         // printf("%s\n", sname); // debug
                         expand_PairsTab(pt);        // 用 Priori 法扩张 PairsTab
-                        print_PairsTab(pt, fout);   // 输出 PairsTab
+                        print_PairsTab(pt, fout , sname);   // 输出 PairsTab
                         fclose(fout);
                         free_KHash(h);              // 释放 k-mer 哈希表
                         free_PairsTab(pt);          // 释放 PairsTab
