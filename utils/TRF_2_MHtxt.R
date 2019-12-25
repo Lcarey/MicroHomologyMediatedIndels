@@ -9,8 +9,8 @@ start_time = Sys.time()
 
 # load data & functions  ---------------------------------------------------------------
 
-source("micro-homology-pair-finding-catching/reference_genome_TRs/code/genome_util_lite.R")
-source("micro-homology-pair-finding-catching/reference_genome_TRs/code/tr_util.R")
+source("~/Develop/MicroHomologyMediatedIndels/reference_genome_TRs/code/genome_util_lite.R")
+source("~/Develop/MicroHomologyMediatedIndels/reference_genome_TRs/code/tr_util.R")
 
 
 # get cmd line args
