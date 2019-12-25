@@ -304,7 +304,7 @@ int main(int argc, char * argv[]) {
                             }
                             i++;
                         }                           // 在第一个分隔符的位置截断序列名称
-                        sprintf(fnout, "%s.%d.%s.out", argv[1], ns, sname);
+                        sprintf(fnout, "%s.%05d.%s.out", argv[1], ns, sname);
                         fout = fopen(fnout, "w");   // 打开输出文件
                         pos = 1-SK;                 // 初始化 pos 为
                                                     // 这样当读完第一个 kmer 时 pos 为 1
