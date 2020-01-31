@@ -25,6 +25,7 @@ ap.add_argument("-f", "--force_overwrite_flag", help="run all cmds even if the o
 ap.add_argument("-rn", "--run_counts_normalization_flag", help="generates .norm.tsv from .counts.tsv. needed for milllion X amplicon seq, but not 10k coverage WGS" , action="store_true" )
 ap.add_argument("-no2unix", "--no_run_dos2unix_on_fasta", help="don't run dos2unix to make sure the newlines are correct" , action="store_true" )
 ap.add_argument("-q", "--mapq_min_quality", help="use samtoosl to remove reads with mapq < Q" , default=0 , required=False  , type=int )
+ap.add_argument("-m", "--ram_per_thread", help="how many GB of RAM to use for each thread (int)" , default=5 , required=False  , type=int )
 args = ap.parse_args()
 
 
@@ -76,9 +77,10 @@ mapq_filter = ' '
 if (args.mapq_min_quality > 0):
     mapq_filter = ' -q ' + str(args.mapq_min_quality) + ' ' 
 
+ram_arg = ' -m' + str(args.ram_per_thread) + 'G '
 cmd = args.bwa + ' mem -Y ' + ' -t ' + str(args.nthreads) + ' ' + args.genome_fasta_file + ' ' + args.read1 + ' ' + args.read2 \
 	+ ' | samtools view -@ 3 -F 2048 -Sb ' + mapq_filter \
-	+ ' | samtools sort -O BAM  --reference ' + args.genome_fasta_file + ' -@ 4 -m5G -o ' + bamcramfile
+	+ ' | samtools sort -O BAM  --reference ' + args.genome_fasta_file + ' -@ 4 ' + ram_arg + ' -o ' + bamcramfile
 print( cmd  )
 if os.path.isfile( bamcramfile):
 	if (os.path.getsize(bamcramfile) > 1000):
@@ -134,7 +136,7 @@ subprocess.run(  cmd  ,  shell=True , check=True)
 cmd = 'grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
 print( cmd ) 
 subprocess.run(  cmd  ,  shell=True , check=True)
-cmd2 = 'gzip --fast ' + args.base_name + '.sign.count.tsv'
+cmd2 = 'gzip --force --best ' + args.base_name + '.sign.count.tsv'
 subprocess.run(  cmd2  ,  shell=True , check=True)
 
 

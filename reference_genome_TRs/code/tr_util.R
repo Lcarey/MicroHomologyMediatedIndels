@@ -74,7 +74,8 @@ annotateTR <- function(gu, chr, posOriginal, k) {
     seq <- gu$extract(chr, pos, pos+k-1)
     endpos <- pos + k
     
-    ir <- findInnerRep(seq)
+    ir <- 1
+    ir <- tryCatch( { findInnerRep(seq) })
     if (ir > 1) seq <- substring(seq, (1:ir - 1) * nchar(seq)/ir + 1, 1:ir * nchar(seq)/ir)
     k <- nchar(seq[1])
 

@@ -16,6 +16,7 @@ my $chr = '' ;
 my $MINIMUM_ENTROPY_THRESHOLD = 0.5 ; # col 12
 my $MINIMUM_REPEAT_LENGTH = 10 ; # col 2
 my $MINIMUM_NUM_REPS_OF_SEQ = 1 ; # col 3
+my $FLAG_SKIP_N = 1 ; 
 while(<>){
 	chomp ; 
 	if ( m/^@([\w-]+)\s/ ) {
@@ -31,6 +32,7 @@ while(<>){
 		next unless $entropy >= $MINIMUM_ENTROPY_THRESHOLD ; 
 		next unless $l[2] >= $MINIMUM_REPEAT_LENGTH ; 
 		next unless $l[3] >= $MINIMUM_NUM_REPS_OF_SEQ ; 
+		next if ( $FLAG_SKIP_N && $seq =~ m/N/) ;
 		print(">$chr.$pos_start.$pos_end\n$seq\n") ; # fasta output
 	}
 }
