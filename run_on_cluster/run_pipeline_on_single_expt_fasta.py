@@ -128,29 +128,47 @@ print( ' ---------  find_mh & extract signatures took : ' +  str( end_time_2 - e
 
 # ## ## catch_signatures.awk & calculate relative coverage (normalized read counts) : 
 # (1) samtools view to count reads
-cmd = 'samtools view -T ' + args.genome_fasta_file + ' ' + bamcramfile + ' | ' + args.catch_signatures + ' ' + signatures_file + ' - > ' + args.base_name + '.sign.count.tsv'
-print( cmd ) 
-subprocess.run(  cmd  ,  shell=True , check=True)
-
+if (os.path.isfile( args.base_name + '.sign.count.tsv' ) or os.path.isfile( args.base_name + '.sign.count.tsv.gz' )) :
+    print( args.base_name + '.sign.count.tsv[.gz] found, skipping. ' ) 
+else:
+    cmd = 'samtools view -T ' + args.genome_fasta_file + ' ' + bamcramfile + ' | ' + args.catch_signatures + ' ' + signatures_file + ' - > ' + args.base_name + '.sign.count.tsv'
+    print( cmd ) 
+    subprocess.run(  cmd  ,  shell=True , check=True)
 #extract the sites found & compress the original
-cmd = 'grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
-print( cmd ) 
-subprocess.run(  cmd  ,  shell=True , check=True)
-cmd2 = 'gzip --force --best ' + args.base_name + '.sign.count.tsv'
-subprocess.run(  cmd2  ,  shell=True , check=True)
+    cmd2 = 'gzip --force --best ' + args.base_name + '.sign.count.tsv'
+    subprocess.run(  cmd2  ,  shell=True , check=True)
+    cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
+    print( cmd ) 
+    subprocess.run(  cmd  ,  shell=True , check=True)
 
 
 
 if (args.run_counts_normalization_flag):
-    # (2) samtools depth  to count total reads at each position w/MH
-    cmd = 'samtools depth -b ' + signatures_file + '.bed' + ' -d 0 ' + bamcramfile + ' > ' + args.base_name + '.cov'
-    print( cmd ) 
-    subprocess.run(  cmd  ,  shell=True , check=True)
+    coverage_file = args.base_name + '.cov'
+    if os.path.isfile( coverage_file ) and (os.path.getsize(coverage_file) > 1000) :
+        print( coverage_file + " already exists. Skipping samtools depth\n")
+    else:
+        # (2) samtools depth  to count total reads at each position w/MH
+        cmd = 'samtools depth -b ' + signatures_file + '.bed' + ' -d 0 ' + bamcramfile + ' > ' + coverage_file
+        print( cmd ) 
+        subprocess.run(  cmd  ,  shell=True , check=True)
 
     # (3) normalize_count creates the final output file
-    cmd = args.normalize_count + ' ' + args.base_name + '.cov' +  '   ' + args.base_name + '.sign.count.tsv'  + ' > ' + args.base_name + '.sign.norm.tsv'
-    print( cmd )
-    subprocess.run(  cmd  ,  shell=True , check=True)
+    #gunzip -c AmpliconLib_E3_Library_4.sign.count.tsv.gz | /usr/bin/gawk -f /home/lucas_pkuhpc/Develop/MicroHomologyMediatedIndels/modules/normalize_count.awk AmpliconLib_E3_Library_4.cov  - 
+    #cmd = args.normalize_count + ' ' + args.base_name + '.cov' +  '   ' + args.base_name + '.sign.count.tsv'  + ' > ' + args.base_name + '.sign.norm.tsv'
+    if os.path.isfile( args.base_name + '.sign.norm.tsv'):
+        if os.path.getsize(args.base_name + '.sign.norm.tsv') < 1000 :
+            os.remove(args.base_name + '.sign.norm.tsv')
+            print( '.sign.norm.tsv exists but is too small. deleting!')
+    if not os.path.isfile( args.base_name + '.sign.norm.tsv') :
+        cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | ' + args.normalize_count + ' ' + coverage_file +  ' - > ' + args.base_name + '.sign.norm.tsv'
+        print( cmd )
+        subprocess.run(  cmd  ,  shell=True , check=True)
+        cmd2 = 'gzip --force --best ' + args.base_name + '.sign.norm.tsv'
+        subprocess.run(  cmd2  ,  shell=True , check=True)
+    else:
+        print( args.base_name + '.sign.norm.tsv' + 'already exits, skipping')
+
 
 
 
