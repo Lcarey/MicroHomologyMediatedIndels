@@ -1,4 +1,9 @@
-%%
+PROJDIR = '/Users/lcarey/CareyLab/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/' ;
+FILE  = 'Sarah/MH_project/ProcessedData/10k.sign.count.tsv' ; 
+T = readtable( [PROJDIR FILE ] , 'FileType', 'text' , 'ReadVariableNames',false,'Delimiter','\t');
+T.Properties.VariableNames = {'chr' 's1' 'e1' 's2' 'e2' 'NDup' 'NColl'} ;
+T.HasDup = T.NDup > 0 ; 
+
 T.MHlen = T.e1 - T.s1 ; 
 T.InterMHlen = T.s2 - T.e1 ; 
 
@@ -47,6 +52,20 @@ xlabel('nt between MHRs')
 legend({'shuffled' 'real'},'location','nw')
 set(gca,'xtick',0:5)
 set(gca,'xticklabel',[1 10 100 1e3 1e4 1e5])
+
+fh = figure('units','centimeters','position',[5 5  9 6]) ;
+hold on ;
+[f,x]=ecdf( Y1 ) ; plot(x,f,'-k','LineWidth',3)
+[f,x]=ecdf( Y2 ); plot(x,f,'-','LineWidth',3)
+axis tight; 
+ylabel('# of inter-duplication events')
+xlabel('nt between MHRs')
+legend({'shuffled' 'real'},'location','nw')
+set(gca,'xtick',0:5)
+set(gca,'xticklabel',[1 10 100 1e3 1e4 1e5])
+
+
+
 
 fh = figure('units','centimeters','position',[5 5  9 9]) ;
 hold on ; 

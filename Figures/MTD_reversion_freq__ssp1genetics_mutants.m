@@ -56,3 +56,5 @@ yh = G.mean_MTDReversionRate(strcmp(G.Genotype,'wt')) + 2*G.std_MTDReversionRate
 
 print('-dpng','~/Downloads/bars_with_points.png','-r500')
 close ; 
+
+%% for cytoscape

@@ -10,7 +10,93 @@ T.MHlen = T.e1 - T.s1 + 1 ;
 T.InterMHDistance = T.s2 - T.e1 + 1 ;
 T.InterMHDistanceR = round(T.InterMHDistance./10)*10 ; 
 
+T=T(T.MHlen>=6,:);
+
+% figure showing biological replicates of WT & each mutant
+wtbaseline_datamat = [T.DupFrq( strcmp(T.chr,'ssp1.dup.1')) T.DupFrq( strcmp(T.chr,'ssp1.dup.2')) T.DupFrq( strcmp(T.chr,'ssp1.dup.3'))] ; 
+WTbaseline = mean( wtbaseline_datamat , 2 );  
+
+R = table();
+R.allstrains = unique(T.chr(regexpcmp(T.chr,'ssp1.dup.')));
+for I = 1:height(R)
+    dupfrq = T.DupFrq(strcmp(T.chr,R.allstrains{I}));
+    log2r = log2( (dupfrq+0.1) ./ (WTbaseline+0.1)  );
+    log2r_notzero = log2r(  WTbaseline>0 & dupfrq>0 ) ;
+    R.mean_dupfreq(I) = mean(dupfrq);
+    R.mean_log10_dupfreq(I) = mean(log10(dupfrq(dupfrq>0)));
+    R.mean_dupfreq_nz(I) = mean(dupfrq(dupfrq>0));
+    R.mean_not_zero(I) = mean(log2r_notzero);
+    R.mean_all(I) = mean(log2r);
+    [ ~,R.ttest_mean_not_zero_p(I) ]=ttest(log2r_notzero);
+    [ ~,R.ttest_mean_all_p(I) ]=ttest(log2r);
+    [ ~,R.ttest_paired_not_zero_p(I) ]=ttest(log2r_notzero , WTbaseline(WTbaseline>0 & dupfrq>0));
+    [ ~,R.ttest_paired_all_p(I) ]=ttest(log2r  , WTbaseline );
+    R.Pct_MHPs_with_Dup(I)  = 100*mean(T.DupFrq(strcmp(T.chr,R.allstrains{I}))>0) ; 
+    R.log2r__Pct_MHPs_with_Dup_over_WT(I)  = log2( R.Pct_MHPs_with_Dup(I) ./ mean(mean(wtbaseline_datamat>0)*100))  ; 
+
+end
+R.Pct_MHPs_with_Dup = round(R.Pct_MHPs_with_Dup*10)/10 ; 
+R    
+writetable( R , '~/Downloads/AmpliconLib4__DuplicationFreqInMutants_RelativeToWT.xlsx') ;
+
+%%
+figure; bar(R.Pct_MHPs_with_Dup); set(gca,'xtick',1:height(R)); 
+set(gca,'xticklabel',regexprep(R.allstrains,'.dup',''))
+xticklabel_rotate([],45)
+ylabel('% of MHPs with duplication')
+line( xlim , [R.Pct_MHPs_with_Dup(end) R.Pct_MHPs_with_Dup(end) ])
+line( xlim , [R.Pct_MHPs_with_Dup(end-1) R.Pct_MHPs_with_Dup(end-1) ])
+
+figure; barh(R.mean_log10_dupfreq); set(gca,'ytick',1:height(R)); 
+set(gca,'yticklabel',regexprep(R.allstrains,'.dup',''))
+xlabel('MTD frequency (log_{10})')
+line([R.mean_log10_dupfreq(end-2) R.mean_log10_dupfreq(end-2) ] , ylim )
+line([R.mean_log10_dupfreq(end-1) R.mean_log10_dupfreq(end-1) ] , ylim)
+xlim([0.3 max(xlim)])
+%% Amplicon 3 library
+DATADIR = '/Users/lcarey/SynologyDrive/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/DataFromCluster/';
+T = readtable( [ DATADIR 'PombeAmpliconSeq_E3_alltsvs.txt' ],'TreatAsEmpty','-');T.Properties.VariableNames = {'chr' 's1' 'e1' 's2' 'e2' 'ReadDepth' 'Ndup' 'Ncol' 'DupFrq' 'ColFrq'};
+
+T.DupFrq(isnan(T.DupFrq))=0;
+T.Ndup(isnan(T.Ndup))=0;
+T.Ncol = []; T.ColFrq = [] ;
+
+T.MHlen = T.e1 - T.s1 + 1 ;
+T.InterMHDistance = T.s2 - T.e1 + 1 ;
+T.InterMHDistanceR = round(T.InterMHDistance./10)*10 ; 
+
 %T=T(T.MHlen>=6,:);
+
+% figure showing biological replicates of WT & each mutant
+wtbaseline_datamat = [T.DupFrq( strcmp(T.chr,'ssp1.dup.1')) T.DupFrq( strcmp(T.chr,'ssp1.dup.2')) T.DupFrq( strcmp(T.chr,'ssp1.dup.3'))] ; 
+WTbaseline = mean( wtbaseline_datamat , 2 );  
+
+R = table();
+R.allstrains = unique(T.chr(regexpcmp(T.chr,'ssp1.dup.')));
+for I = 1:height(R)
+    dupfrq = T.DupFrq(strcmp(T.chr,R.allstrains{I}));
+    log2r = log2( (dupfrq+0.1) ./ (WTbaseline+0.1)  );
+    log2r_notzero = log2r(  WTbaseline>0 & dupfrq>0 ) ;
+    R.mean_dupfreq(I) = mean(dupfrq);
+    R.mean_log10_dupfreq(I) = mean(log10(dupfrq(dupfrq>0)));
+    R.mean_dupfreq_nz(I) = mean(dupfrq(dupfrq>0));
+    R.mean_not_zero(I) = mean(log2r_notzero);
+    R.mean_all(I) = mean(log2r);
+    [ ~,R.ttest_mean_not_zero_p(I) ]=ttest(log2r_notzero);
+    [ ~,R.ttest_mean_all_p(I) ]=ttest(log2r);
+    [ ~,R.ttest_paired_not_zero_p(I) ]=ttest(log2r_notzero , WTbaseline(WTbaseline>0 & dupfrq>0));
+    [ ~,R.ttest_paired_all_p(I) ]=ttest(log2r  , WTbaseline );
+    R.Pct_MHPs_with_Dup(I)  = 100*mean(T.DupFrq(strcmp(T.chr,R.allstrains{I}))>0) ; 
+    R.log2r__Pct_MHPs_with_Dup_over_WT(I)  = log2( R.Pct_MHPs_with_Dup(I) ./ mean(mean(wtbaseline_datamat>0)*100))  ; 
+
+end
+R.Pct_MHPs_with_Dup = round(R.Pct_MHPs_with_Dup*10)/10 ; 
+R    
+writetable( R , '~/Downloads/AmpliconLib4__DuplicationFreqInMutants_RelativeToWT.xlsx') ;
+
+
+
+
 
 %% Amplicon 4 library
 WT = mean( [T.DupFrq( strcmp(T.chr,'ssp1.dup.1')) T.DupFrq( strcmp(T.chr,'ssp1.dup.2')) T.DupFrq( strcmp(T.chr,'ssp1.dup.3'))],2);  
