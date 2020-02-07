@@ -15,18 +15,7 @@ T.ALT_len = cellfun(@length,T.ALT);
 T.IsInsertion = T.ALT_len > T.REF_len ; 
 
 T.Location = categorical(T.Location);
-%% 
-G = grpstats( T(T.IsInsertion & T.Location=='reading_frame' , : ) , {'Impact' 'HasMH'} , 'mean' , 'DataVars','REF_N')
 
-figure; 
-t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
-
-nexttile 
-pie( G.GroupCount(G.HasMH) , G.Impact(G.HasMH))
-title('Has MH')
-nexttile 
-pie( G.GroupCount(~G.HasMH) , G.Impact(~G.HasMH))
-title('no MH')
 %%
 fh = figure('units','centimeters','position',[5 5  15 6]) ;
 FS = 12 ; 
