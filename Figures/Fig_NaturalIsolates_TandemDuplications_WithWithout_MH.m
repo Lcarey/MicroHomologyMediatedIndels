@@ -1,5 +1,7 @@
 % Fig_NaturalIsolates_TandemDuplications_WithWithout_MH
-FN = '~/Nutstore Files/Microhomology shared folder/Figures/Fig3/57 nature isolates_sequencing summary.xlsx';
+%   what % of >10bp insertions in wild S. pombe isolates have MH? 
+FIGDIR  = '~/Nutstore Files/Microhomology shared folder/Figures/Fig4/' ;
+FN = [ FIGDIR '57 nature isolates_sequencing summary.xlsx' ] ;
 
 T = readtable( FN , 'Sheet' , 2);
 T = T( : , 1:13) ; 
@@ -17,9 +19,11 @@ T.IsInsertion = T.ALT_len > T.REF_len ;
 T.Location = categorical(T.Location);
 
 %%
-fh = figure('units','centimeters','position',[5 5  15 6]) ;
+fh = figure('units','centimeters','position',[5 5  12 5]) ;
 FS = 12 ; 
 
+clr1 = [118 214 255] ./ 255 ; 
+clr2 = [.8 .8 .8] ; 
 idx_1x_2x = T.REF_N==1 & T.ALT_N==2 ; 
 idx_1x_Xx = T.REF_N==1 & T.ALT_N>2 ; 
 idx_Xx_Xx = T.REF_N>1 & T.ALT_N>T.REF_N ; 
@@ -37,7 +41,7 @@ bh = bar([ data0X [0;0]]' , 'stacked' ,'FaceColor','flat') ;
 axis tight; xlim([0.5 1.5])
 set(gca,'xticklabel','simple insertion')
 box off
-bh(1).FaceColor = 'y' ; bh(2).FaceColor = [.8 .8 .8];
+bh(1).FaceColor = sqrt(clr1) ; bh(2).FaceColor = sqrt(clr2) ;
 text( 0.8 , max(ylim)*0.15 , {'with' 'MH'},'FontSize',FS)
 text( 0.8 , max(ylim)*0.75 , {' no' 'MH'},'FontSize',FS)
 
@@ -47,7 +51,7 @@ bh = bar([ data12 [0;0]]' , 'stacked' ) ;
 axis tight; xlim([0.5 1.5])
 set(gca,'xticklabel','1x ? 2x')
 box off
-bh(1).FaceColor = 'y' ; bh(2).FaceColor = [.8 .8 .8];
+bh(1).FaceColor = clr1 ; bh(2).FaceColor = clr2 ;
 text( 0.8 , max(ylim)*0.15 , {'with' 'MH'},'FontSize',FS)
 text( 0.8 , max(ylim)*0.75 , {' no' 'MH'},'FontSize',FS)
 
@@ -56,7 +60,7 @@ bh = bar([ data1X [0;0]]' , 'stacked' ) ;
 axis tight; xlim([0.5 1.5])
 set(gca,'xticklabel','1x ? >2x')
 box off
-bh(1).FaceColor = 'y' ; bh(2).FaceColor = [.8 .8 .8];
+bh(1).FaceColor = sqrt(clr1) ; bh(2).FaceColor = sqrt(clr2) ;
 text( 0.8 , max(ylim)*0.15 , {'with' 'MH'},'FontSize',FS)
 text( 0.8 , max(ylim)*0.75 , {' no' 'MH'},'FontSize',FS)
 
@@ -65,12 +69,12 @@ bh = bar([ dataXX [0;0]]' , 'stacked' ) ;
 axis tight; xlim([0.5 1.5])
 set(gca,'xticklabel','>1x ? >Nx')
 box off
-bh(1).FaceColor = 'y' ; bh(2).FaceColor = [.8 .8 .8];
+bh(1).FaceColor = sqrt(clr1) ; bh(2).FaceColor = sqrt(clr2) ;
 text( 0.8 , max(ylim)*0.15 , {'with' 'MH'},'FontSize',FS)
 text( 0.8 , max(ylim)*0.75 , {' no' 'MH'},'FontSize',FS)
 
 
 ylabel(t,'Number of Insertions')
 
-print('-dpng' , '~/Downloads/Fig_NaturalIsolates_TandemDuplications_WithWithout_MH_barplots' , '-r300');
-%close ; 
+print('-dpng' , [ FIGDIR 'NaturalIsolates_TandemDuplications_WithWithout_MH_barplots' ] , '-r300');
+close ; 
