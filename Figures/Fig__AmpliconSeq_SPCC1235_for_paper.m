@@ -44,7 +44,7 @@ R.genotype = regexprep( R.genotype , '^[12]$','WT');
 G = grpstats( R , 'genotype' ,'mean' ,'datavars' , R.Properties.VariableNames(2:end-1));
 G.genotype = regexprep( G.genotype , 'd$','\\Delta');
 
-writetable( R , '~/Downloads/AmpliconLib3__DuplicationFreqInMutants_RelativeToWT.xlsx') ;
+%writetable( R , '~/Downloads/AmpliconLib3__DuplicationFreqInMutants_RelativeToWT.xlsx') ;
 %%
 
 % Figure for publication

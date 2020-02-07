@@ -1,3 +1,6 @@
+% simulate mutation and reversion at varying reversion rates
+%   show that MTDs will, by nature, always be subclonal
+
 % High reversion rates do not strongly affect measured mutant frequencies during short-term outgrowth from a single cell 
 % into a population of ~108 cells (these experiments) 
 % but does reduce the mutant genotype frequency within the population during long-term evolution. 
@@ -8,26 +11,30 @@
 % Let the frequency of A1 (call it p) = 0.99, and the frequency of A2 (q) = 0.01.
 % What is the new frequency of A2 after one generation of mutation?
 
+FIGDIR  = '~/Nutstore Files/Microhomology shared folder/Figures/Fig4/' ;
+addpath_recurse('~/Develop/MicroHomologyMediatedIndels')
+
 % = 0.01 + [(10-5)(0.99) - (10-6)(0.01)] = 0.01 + 9.89 x 10-6 approximately = 0.01001.
 LW = 3 ; 
 WTfreq = 1 ; 
 mutation_rate = 10^-7 ;
 number_of_generations = 30 ; 
 
-fh = figure('units','centimeters','position',[5 5 15 8]) ;hold on ;
-t = tiledlayout(1,2)
+fh = figure('units','centimeters','position',[5 5 12 6]) ;hold on ;
+t = tiledlayout(1,2);
 nexttile ; hold on ;
 plot( simulate_mutation_reversion(number_of_generations,mutation_rate,1e-7)  , '-','Color',[.5 .5 .5] ,'DisplayName','10^{-7}','LineWidth',LW)
 plot( simulate_mutation_reversion(number_of_generations,mutation_rate,0.01)  , '-','DisplayName','0.01','LineWidth',LW)
 plot( simulate_mutation_reversion(number_of_generations,mutation_rate,0.001)  , '-','DisplayName','0.001','LineWidth',LW)
 xlabel('Number of generations')
-ylabel('Mutant genotype frequency')
+ylabel('Mutant frequency (10^{-6})')
 %title( sprintf('             mutation rate = 10^{%d}' , log10(mutation_rate) ) );
-title('short-term')
+title('       short-term')
 grid off ;
-legend('location','nw','box','off')
+lh = legend('location','best','box','off');
 %text( 1 , max(ylim)*0.97 , 'reversion rate')
-text(1 , max(ylim)*0.97 , '\underline{reversion rate}', 'FontSize', 12, 'Interpreter', 'latex','FontName','Helvetica')
+set(gca,'ytick',(0:3).*1e-6 ) ;  set(gca,'yticklabel',0:3) ; ylim([0 max(get(gca,'ytick'))])
+text(1 , max(ylim)*0.96 , '\underline{reversion rate}', 'FontSize', 12, 'Interpreter', 'latex','FontName','Helvetica')
 
 nexttile ; hold on ;
 number_of_generations = 3e3 ; mutation_rate = 10^-7 ;
@@ -35,16 +42,15 @@ plot( simulate_mutation_reversion(number_of_generations,mutation_rate,1e-7)  , '
 plot( simulate_mutation_reversion(number_of_generations,mutation_rate,0.01)  , '-','DisplayName','0.01','LineWidth',LW)
 plot( simulate_mutation_reversion(number_of_generations,mutation_rate,0.001)  , '-','DisplayName','0.001','LineWidth',LW)
 xlabel('Number of generations')
-ylabel('Mutant genotype frequency')
+ylabel('Mutant frequency (10^{-4})')
 %title( sprintf('             mutation rate = 10^{%d}' , log10(mutation_rate) ) );
 grid off ;
-legend('location','nw','box','off')
-title('long-term')
-%text( 100 , max(ylim)*0.97 , 'reversion rate')
-text(100 , max(ylim)*0.97 , '\underline{reversion rate}', 'FontSize', 12, 'Interpreter', 'latex','FontName','Helvetica')
-
-print('-dpng','~/Downloads/simulation_mutation_reversion__MutationFrequencies' ,'-r300')
-
+legend('location','best','box','off')
+title('       long-term')
+set(gca,'ytick',(0:3).*1e-4 ) ;  set(gca,'yticklabel',0:3) ; ylim([0 max(get(gca,'ytick'))])
+text(100 , max(ylim)*0.96 , '\underline{reversion rate}', 'FontSize', 12, 'Interpreter', 'latex','FontName','Helvetica')
+print('-dpng',[FIGDIR 'MTDs_are_always_subclonal__simulation_mutation_reversion__MutationFrequencies'] ,'-r300') ;
+close all ; 
 %% %% old steady-state equilibrium simulation
 % 
 % % reading

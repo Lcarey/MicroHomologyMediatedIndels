@@ -1,36 +1,13 @@
 % plot the measured and predicted MTDs across the genome, and show a hot and cold spot
 
 
-%% FIRST, to chose some hot and cold genes, use the per-gene data
+% load data and set output dirs
 DATADIR = '/Users/lcarey/SynologyDrive/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/Sarah/MH_project/Manuscript-todo/ProcessedData/' ;
-FIGBASENAME = '~/Downloads/MTD_observed_predict_across_chromosome_'  ; 
-
-G = readtable([DATADIR 'MHRSumPreinGene.txt' ],'TreatAsEmpty','.');
-G.Properties.VariableNames = { 'chr'	'start1'	'end2'	'gene'	'systematic_name'	'sumObs'	'sumPre'	'sumFloat'}; 
-G.GeneLength = abs(G.start1 - G.end2) ./ 1000 ; 
-G.SumFloat_N = G.sumFloat ./ G.GeneLength ; 
-G.sumObs_N = G.sumObs ./G.GeneLength ; 
-G.sumPre_N = G.sumObs ./ G.GeneLength ; 
-G = sortrows(G,'sumFloat','ascend');
-G.sumFloat_Rank = (1:height(G))' ;
-
-G = sortrows(G,'SumFloat_N','ascend');
-G.sumFloat_N_Rank = (1:height(G))' ;
-
-% only chrI
-G = G( strcmp(G.chr,'I') , :);
-G = sortrows( G , 'sumObs' , 'descend'); 
-G.sumObs_Rank = (1:height(G))' ;
-
-idx = strcmp(G.gene,'gcn5') ; 
-gene_window = [G.start1(idx)  G.end2(idx) ] ./ 1000  ; 
-hot_window = [G.start1(idx)-50000 G.end2(idx)+50000] ./ 1000 ; 
+FIGDIR  = '~/Nutstore Files/Microhomology shared folder/Figures/Fig2 - cis-determinants of MTD through ultra-deep sequencing/' ;
+FIGBASENAME = [FIGDIR 'MTD_observed_predict_across_chromosome_' ] ; 
 
 
-
-
-%% load whole-genome 1kb window data
-
+% load whole-genome 1kb window data
 
 T = readtable( [ DATADIR 'loc_obs_pre1k.txt' ] );
 T.loc = T.loc ./ 1000  ;
@@ -49,26 +26,31 @@ R = grpstats(T,{'chr' 'locR'},'mean');
 R.obs_over_mhr = R.mean_sumObs ./ R.mean_sumMHR ; 
 R = sortrows( R , 'obs_over_mhr' ,'ascend') ;
 
-%%
+%% plot MTDs across chromosome I
 clrs = cbrewer('qual','Set1',5);
-fh = figure('units','centimeters','position',[5 5  70 20]) ;
-t = tiledlayout(3,1,'TileSpacing','none','Padding','none')
+fh = figure('units','centimeters','position',[5 5  30 8]) ;
+t = tiledlayout(3,1,'TileSpacing','none','Padding','none') ; 
 nexttile
 plot( T.loc , T.sumMHR ,'Color',clrs(1,:) )
 ylabel('# of MHPs')
 axis tight; 
-nexttile
+ylim([1501 3200])
+set(gca,'YTick', 0:1e3:1e5 )
+set(gca,'TickLength',[0 0])
 
+nexttile
 plot( T.loc , T.sumObs ,'Color',clrs(2,:) )
-ylabel('# of observed MTDs')
+ylabel({'observed' '# of MTDs'})
 axis tight; 
 ylim([-0.5  6.5])
-nexttile
+set(gca,'TickLength',[0 0])
 
+nexttile
 plot( T.loc , T.sumPre ,'Color',clrs(3,:) )
-ylabel('# predicted MTDs')
+ylabel({'predicted' '# of MTDs'})
 axis tight; 
 ylim([-0.5  6.5])
+set(gca,'TickLength',[0 0])
 % 
 % nexttile
 % plot( T.loc , T.sumFloat ,'Color',clrs(4,:) )
@@ -76,9 +58,9 @@ ylim([-0.5  6.5])
 % ylabel('MTD prediction score')
 % axis tight; 
 
-title(t,'MTDs across chromosome I')
+title(t,'MHPairs and predicted & observed MTDs across chromosome I')
 xlabel(t,'Position on chromosome (kb)')
-print('-dpng',[FIGBASENAME 'A'],'-r300');
+print('-dpng',[FIGBASENAME 'A'],'-r150');
 close ; 
 
 %%
@@ -120,7 +102,7 @@ set(gca,'xtick',xt);
 % axis tight; 
 
 xlabel(t,'Position on chromosome (kb)')
-title(t,'hot spots in chrI')
+title(t,'hot spot in chrI')
 print('-dpng',[FIGBASENAME 'H'],'-r300');
 close ; 
 
@@ -162,6 +144,6 @@ set(gca,'xtick',xt);
 % axis tight; 
 
 xlabel(t,'Position on chromosome (kb)')
-title(t,'cold spots in chrI')
+title(t,'cold spot in chrI')
 print('-dpng',[FIGBASENAME 'C'],'-r300');
 close ; 
