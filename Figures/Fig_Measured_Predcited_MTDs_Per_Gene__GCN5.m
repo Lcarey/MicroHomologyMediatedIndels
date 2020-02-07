@@ -7,7 +7,7 @@
 
 DATADIR = '/Users/lcarey/SynologyDrive/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/Sarah/MH_project/Manuscript-todo/processeddata/' ;
 T = readtable([DATADIR 'MHRSumPreinGene.txt' ],'TreatAsEmpty','.');
-T.Properties.VariableNames = { 'chr'	'start1'	'end2'	'gene'	'systematic_name'	'sumObs'	'sumPre'	'sumFloat'}; 
+T.Properties.VariableNames = { 'chr'	'start1'	'end2' 'dunno'	'gene'	'systematic_name'	'sumObs'	'sumPre'	'sumFloat' 'dunno2'}; 
 T.GeneLength = abs(T.start1 - T.end2) ./ 1000 ; 
 T.SumFloat_N = T.sumFloat ./ T.GeneLength ; 
 T.sumObs_N = T.sumObs ./ T.GeneLength ; 
@@ -17,6 +17,45 @@ T.sumFloat_Rank = (1:height(T))' ;
 
 T = sortrows(T,'SumFloat_N','ascend');
 T.sumFloat_N_Rank = (1:height(T))' ;
+
+%% distribution of MTDs per gene
+fh = figure('units','centimeters','position',[5 5 6 6]);
+hold on ; 
+
+Y=T.sumObs;
+Y(Y>=10)=10.5;
+
+Yn=T.sumObs_N;
+Yn(Yn>=10)=10.5;
+
+histogram(Y,-0.5:11);
+%histogram(Yn,-0.5:11);
+
+
+set(gca,'yscale','log')
+ylabel('# of genes')
+xlabel('# of MTDs per gene')
+set(gca,'xtick',[0 5 9.5])
+set(gca,'xticklabel',{'0' '5' '>=10'})
+set(gca,'ytick',[1 10 1e2 1e3 1e4 1e5])
+axis tight; 
+
+print('-dpng','~/Downloads/Distribution_of_MTDs_per_gene' ,'-r300');
+close
+%%
+
+fh = figure('units','centimeters','position',[5 5 6 6]);
+Y=T.sumObs_N;
+Y(Y>=10)=10.5;
+histogram(Y,-0.5:11);
+set(gca,'yscale','log')
+ylabel('# of genes')
+xlabel('# of MTDs per gene')
+%set(gca,'xtick',[0 5 9.5])
+%set(gca,'xticklabel',{'0' '5' '>=10'})
+set(gca,'ytick',[1 10 1e2 1e3 1e4 1e5])
+axis tight; 
+
 %%
 Yo = T.sumObs ; Yo(Yo>100)=100; 
 Yp = T.sumObs ; Yp(Yp>100)=100; 
