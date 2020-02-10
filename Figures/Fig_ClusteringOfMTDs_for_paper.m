@@ -16,7 +16,28 @@ clear D A ;
 % access to very long tables is slow. use vectors instead
 [closest_MTD , o] = sort(closest_MTD,'ascend');
 HasDup = HasDup(o);
+%% bar plot of % of MHPs with an MTD within 100nt, vs >100nt
+%mypool = parpool();
+%opt = statset('UseParallel',true);
 
+within_100 = mean(HasDup(closest_MTD<=100))*100 ; 
+not_within_100 = mean(HasDup(closest_MTD>100))*100 ; 
+% too slow
+%tic ; within_100 = 100 * bootstrp( 100 , @mean , within_100,'Options',opt) ; toc
+%tic ; not_within_100 = 100 * bootstrp( 1e3 , @mean , not_within_100,'Options',opt) ; toc
+
+%%
+fh = figure('units','centimeters','position',[50 50 5 9]) ;
+clrs = get(gca,'ColorOrder');
+bar(  [0.9 2.1] , [within_100 not_within_100] , 'FaceColor',clrs(4,:)  );
+ylabel('% of MHPs with an MTD')
+set(gca,'xtick', [0.9 2.1] )
+set(gca,'xticklabel',{'<100nt' '>100nt'});
+xlabel({'Distance to nearest' 'MHP with an MTD'})
+xlim([0.4 2.6])
+box off ;
+print('-dpng',[FIGBASENAME 'bars'] , '-r300');
+close ;
 %%  several different methods for binning, clustering, plotting
 %  ksdensity looks the best
 

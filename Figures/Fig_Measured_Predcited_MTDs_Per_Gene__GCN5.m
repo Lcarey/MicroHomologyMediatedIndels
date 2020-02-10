@@ -7,6 +7,9 @@
 
 DATADIR = '~/SynologyDrive/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/Sarah/MH_project/Manuscript-todo/processeddata/' ;
 FIGDIR  = '~/Nutstore Files/Microhomology shared folder/Figures/Fig2 - cis-determinants of MTD through ultra-deep sequencing/' ;
+D = readtable([DATADIR 'MHRinGene.txt' ],'TreatAsEmpty','.');
+D.Properties.VariableNames = {'chr' 'start1' 'end1' 'type' 'systematic_name' 'N_MHPs'} ;
+D.systematic_name = regexprep( regexprep( D.systematic_name , 'ID=','') , ';Name.*' , '') ;
 
 T = readtable([DATADIR 'MHRSumPreinGene.txt' ],'TreatAsEmpty','.');
 T.Properties.VariableNames = { 'chr'	'start1'	'end2' 'dunno'	'gene'	'systematic_name'	'sumObs'	'sumPre'	'sumFloat' 'dunno2'}; 
@@ -20,6 +23,8 @@ T.sumFloat_Rank = (1:height(T))' ;
 T = sortrows(T,'SumFloat_N','ascend');
 T.sumFloat_N_Rank = (1:height(T))' ;
 
+
+T = innerjoin(D , T  , 'key' , 'systematic_name'); 
 %% histogram distribution of MTDs per gene
 fh = figure('units','centimeters','position',[5 5 5 6]);
 hold on ; 
@@ -63,6 +68,23 @@ axis tight;
 ylim(yl)
 
 print('-dpng', [ FIGDIR 'Distribution_of_MTDs_per_gene_per_kb' ] ,'-r300');
+close
+
+%% histogram  of MHPs per gene, and MTDs normalized by MHP
+fh = figure('units','centimeters','position',[5 5 6 6]);
+hold on ; 
+
+G = T.sumObs ; 
+G(G>=6)=6;
+boxplot( (T.N_MHPs) , G ,'symbol','','notch','on' , 'Positions' , [ 0:5 6.2] ) ;
+ylim([0 10500])
+xlabel('# of MTDs per gene')
+ylabel('# of MHPs per gene')
+set(gca,'xtick',0:6.2)
+set(gca,'xticklabel', {'0' '1' '2' '3' '4' '5' '>=6'})
+
+%set(gca,'ytick',[0 1e3 2e3 5e3 1e4])
+print('-dpng', [ FIGDIR 'Distribution_of_MTDs_per_gene_boxplot' ] ,'-r300');
 close
 
 %%
