@@ -42,12 +42,15 @@ R.r = r';
 R.vn = T.Properties.VariableNames' ; 
 R = sortrows(R,'r','descend')
 %%
+clr_len = [ 0.85 0.85 0.85 ] ; 
+clr_mdl = [77	175	74	]./255 ; 
+
 T.sumObs_THRESH = T.sumObs ; 
     T.sumObs_THRESH(T.sumObs_THRESH>10) = 12 ; 
 
-fh = figure('units','centimeters','position',[5 5 27 7]) ;
+fh = figure('units','centimeters','position',[5 5 30 7]) ;
 subplot(1,4,1) 
-boxplot( T.GeneLength , T.sumObs_THRESH ,'symbol','' , 'Positions' , unique(T.sumObs_THRESH) ,'PlotStyle','compact' )
+boxplot( T.GeneLength , T.sumObs_THRESH ,'symbol','' , 'Positions' , unique(T.sumObs_THRESH) ,'PlotStyle','compact' ,'Color' , clr_len )
 ylabel('Gene Length (kb)')
 %xlabel('# of observed MTDs per gene')
 ylim([0.5 prctile( T.GeneLength,99.9)])
@@ -66,7 +69,7 @@ set(gca,'xtick',[0 2 4 6 8 10 12]) ; set(gca,'xticklabel',{'0' '2' '4' '6' '8' '
 
 
 subplot(1,4,3) 
-boxplot( T.sumFloat , T.sumObs_THRESH ,'symbol','' , 'Positions' , unique(T.sumObs_THRESH) ,'PlotStyle','compact' ,'Color','k')
+boxplot( T.sumFloat , T.sumObs_THRESH ,'symbol','' , 'Positions' , unique(T.sumObs_THRESH) ,'PlotStyle','compact' ,'Color',clr_mdl)
 ylabel('Predicted MTD score')
 %xlabel('# of observed MTDs per gene')
 ylim([5 prctile( T.sumFloat,99.9)])
@@ -77,9 +80,9 @@ subplot(1,4,4)  ; hold on ;
 r1 = corr(T.sumObs,T.GeneLength,'rows','complete');
 r2 = corr(T.sumObs,T.N_MHPs,'rows','complete');
 r3 = corr(T.sumObs,T.sumFloat,'rows','complete');
-bar( 1,  mean(r1) ,'FaceColor','b') ; %errorbar(1,mean(r1),std(r1),'.k');
+bar( 1,  mean(r1) ,'FaceColor',clr_len) ; %errorbar(1,mean(r1),std(r1),'.k');
 bar( 2,  mean(r2) ,'FaceColor','r') ; %errorbar(2,mean(r2),std(r2),'.k');
-bar( 3,  mean(r3) ,'FaceColor','k') ; %errorbar(3,mean(r3),std(r3),'.k');
+bar( 3,  mean(r3) ,'FaceColor',clr_mdl) ; %errorbar(3,mean(r3),std(r3),'.k');
 xlim([0.4 3.6])
 set(gca,'xticklabels',{'Length' '# MHPs' 'model'})
 ylabel('Correlation')
