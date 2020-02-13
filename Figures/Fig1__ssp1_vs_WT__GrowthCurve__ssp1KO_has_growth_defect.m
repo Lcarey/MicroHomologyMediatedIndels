@@ -6,8 +6,9 @@ T = readtable( FN , 'Sheet',1);
 data = table2array(T(:,2:end));
 hours = [0 3 6 9 12] ; 
 
+FigSize = [5 5 7 5] ; 
 %%
-fh = figure('units','centimeters','position',[5 5 5 6]) ;
+fh = figure('units','centimeters','position', FigSize) ;
 hold on; 
 
 plot( hours , data(3,:),'.-','DisplayName',T.Var1{3},'Color','b','LineWidth',1)
@@ -20,6 +21,7 @@ xlabel('Time (hrs)')
 ylabel('Cell Density (OD_{600})')
 set(gca,'yscale','lin')
 axis tight ;
+set(gca,'ytick',0:0.2:2);
 
 l2r = log2(T.x12./T.x0)
 [~,p] = ttest2(l2r(1:2),l2r(3:end))
