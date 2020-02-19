@@ -4,6 +4,8 @@
 %  ubp8, where we also observed a single MTD in our high-coverage sequencing data. 
 %  These results suggest that MTDs likely exist at high frequency in most genes, 
 %  and are frequently the raw material on which natural selection acts. 
+%
+% LBC Febuary 2020
 
 DATADIR = '~/SynologyDrive/Projects/2019__MicroHomologyMediatedIndels__XiangweHe_ZhejiangU/Sarah/MH_project/Manuscript-todo/processeddata/' ;
 FIGDIR  = '~/Nutstore Files/Microhomology shared folder/Figures/Fig2 - cis-determinants of MTD through ultra-deep sequencing/' ;

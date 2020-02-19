@@ -32,6 +32,10 @@ for I = 1:height(R)
     [ ~,R.ttest_paired_not_zero_p(I) ]=ttest(log2r_notzero , WTbaseline(WTbaseline>0 & dupfrq>0));
     [ ~,R.ttest_paired_all_p(I) ]=ttest(log2r  , WTbaseline );
     R.Pct_MHPs_with_Dup(I)  = 100*mean(T.DupFrq(strcmp(T.chr,R.allstrains{I}))>0) ; 
+    R.Pct_MHPs_with_Dup_4(I)  = 100*mean(T.DupFrq(T.MHlen==4 & strcmp(T.chr,R.allstrains{I}))>0) ; 
+    R.Pct_MHPs_with_Dup_5(I)  = 100*mean(T.DupFrq(T.MHlen==5 & strcmp(T.chr,R.allstrains{I}))>0) ; 
+    R.Pct_MHPs_with_Dup_gt6(I)  = 100*mean(T.DupFrq(T.MHlen>=6 & strcmp(T.chr,R.allstrains{I}))>0) ; 
+    
     R.log2r__Pct_MHPs_with_Dup_over_WT(I)  = log2( R.Pct_MHPs_with_Dup(I) ./ mean(mean(wtbaseline_datamat>0)*100))  ; 
 
 end
