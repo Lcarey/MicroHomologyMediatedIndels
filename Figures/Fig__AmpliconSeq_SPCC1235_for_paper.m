@@ -48,11 +48,13 @@ R.genotype = regexprep( R.genotype , '^[12]$','WT');
 G = grpstats( R , 'genotype' ,'mean' ,'datavars' , R.Properties.VariableNames(2:end-1));
 G.genotype = regexprep( G.genotype , 'd$','\\Delta');
 
+G.genotype{strcmp(G.genotype,'rad27\Delta')} = 'rad2\Delta' ;
+
 %writetable( R , '~/Downloads/AmpliconLib3__DuplicationFreqInMutants_RelativeToWT.xlsx') ;
 %%
 
 % Figure for publication
-fh = figure('units','centimeters','position',[5 5  6 9]) ;
+fh = figure('units','centimeters','position',[5 5  6 8]) ;
 hold on ;
 bar( G.mean_Pct_MHPs_with_Dup(1:3) ,'FaceColor',[.8 .8 .8]);
 plot( [1 1 2 2 3 3 ] , R.Pct_MHPs_with_Dup(1:6) , 'ok' ,'MarkerSize',5)
@@ -61,7 +63,7 @@ set(gca,'xtick',1:3)
 set(gca,'xticklabel',G.genotype(1:3));
 ylabel('% of MHPairs with an MTD');
 
-fh = figure('units','centimeters','position',[5 5  6 9]) ;
+fh = figure('units','centimeters','position',[5 5  6 8]) ;
 hold on ;
 bar( G.mean_mean_log10_dupfreq(1:3) ,'FaceColor',[.8 .8 .8]);
 plot( [1 1 2 2 3 3 ] , R.mean_log10_dupfreq(1:6) , 'ok' ,'MarkerSize',5)
@@ -71,7 +73,7 @@ set(gca,'xticklabel',G.genotype(1:3));
 ylabel('Mean MTD frequency (log_{10})');
 ylim([0.7 1.3])
 
-
+%%
 datamat = [T.DupFrq( strcmp(T.chr,'SPCC1235.01.1')) T.DupFrq( strcmp(T.chr,'SPCC1235.01.2')) ] ; 
 WT = mean( datamat , 2 );  
 

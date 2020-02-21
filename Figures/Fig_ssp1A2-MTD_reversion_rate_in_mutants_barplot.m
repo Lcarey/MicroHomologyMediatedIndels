@@ -40,7 +40,7 @@ for I = 1:size(data,2)
 end
 
 set(gca,'yscale','log')
-ylabel('MTD reversion rate')
+ylabel('MTD revertant frequency')
 xlim([0.4 size(data,2)+0.6])
 set(gca,'xtick',1:size(data,2),'xticklabels',vn);
 fix_xticklabels(gca)
