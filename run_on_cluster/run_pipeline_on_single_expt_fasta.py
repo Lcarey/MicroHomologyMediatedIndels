@@ -135,11 +135,12 @@ else:
     print( cmd ) 
     subprocess.run(  cmd  ,  shell=True , check=True)
 #extract the sites found & compress the original
-    cmd2 = 'gzip --force --best ' + args.base_name + '.sign.count.tsv'
-    subprocess.run(  cmd2  ,  shell=True , check=True)
-    cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
-    print( cmd ) 
-    subprocess.run(  cmd  ,  shell=True , check=True)
+    #cmd2 = 'gzip --force --best ' + args.base_name + '.sign.count.tsv'
+    #subprocess.run(  cmd2  ,  shell=True , check=True)
+    #cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
+    #cmd = 'cat ' + args.base_name + '.sign.count.tsv | grep -Pv \'\t0\t0$\' ' + args.base_name + '.sign.count.tsv | perl -ne \'chomp ; print "$_\t' + args.base_name + '\n" ; \' > ' + args.base_name + '.sites_found.txt'
+    #print( cmd ) 
+    #subprocess.run(  cmd  ,  shell=True , check=True)
 
 
 
@@ -161,15 +162,14 @@ if (args.run_counts_normalization_flag):
             os.remove(args.base_name + '.sign.norm.tsv')
             print( '.sign.norm.tsv exists but is too small. deleting!')
     if not os.path.isfile( args.base_name + '.sign.norm.tsv') :
-        cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | ' + args.normalize_count + ' ' + coverage_file +  ' - > ' + args.base_name + '.sign.norm.tsv'
+        #cmd = 'gunzip -c ' + args.base_name + '.sign.count.tsv.gz | ' + args.normalize_count + ' ' + coverage_file +  ' - > ' + args.base_name + '.sign.norm.tsv'
+        cmd = 'cat ' + args.base_name + '.sign.count.tsv  | ' + args.normalize_count + ' ' + coverage_file +  ' - > ' + args.base_name + '.sign.norm.tsv'
         print( cmd )
         subprocess.run(  cmd  ,  shell=True , check=True)
         cmd2 = 'gzip --force --best ' + args.base_name + '.sign.norm.tsv'
         subprocess.run(  cmd2  ,  shell=True , check=True)
     else:
         print( args.base_name + '.sign.norm.tsv' + 'already exits, skipping')
-
-
 
 
 print( ' --------- catch_signatures & normalized coverage took: ' +  str( time.perf_counter() - end_time_2) + ' seconds ------\n')
