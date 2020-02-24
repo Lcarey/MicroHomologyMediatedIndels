@@ -18,6 +18,8 @@ T.IsInsertion = T.ALT_len > T.REF_len ;
 
 T.Location = categorical(T.Location);
 
+T = T( T.IsInsertion , :); 
+
 %%
 fh = figure('units','centimeters','position',[5 5  12 5]) ;
 FS = 12 ; 
