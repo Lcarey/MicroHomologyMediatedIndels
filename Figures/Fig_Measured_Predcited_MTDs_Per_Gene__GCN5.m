@@ -15,11 +15,13 @@ D.systematic_name = regexprep( regexprep( D.systematic_name , 'ID=','') , ';Name
 
 T = readtable([DATADIR 'MHRSumPreinGene.txt' ],'TreatAsEmpty','.');
 T.Properties.VariableNames = { 'chr'	'start1'	'end2' 'dunno'	'gene'	'systematic_name'	'sumObs'	'sumPre'	'sumFloat' 'dunno2'}; 
+
+
 T.GeneLength = abs(T.start1 - T.end2) ./ 1000 ; 
 T.SumFloat_N = T.sumFloat ./ T.GeneLength ; 
 T.sumObs_N = T.sumObs ./ T.GeneLength ; 
 T.sumPre_N = T.sumObs ./ T.GeneLength ; 
-T = sortrows(T,'sumFloat','ascend');
+T = sortrows(T,'sumFloat','descend');
 T.sumFloat_Rank = (1:height(T))' ;
 
 T = sortrows(T,'SumFloat_N','ascend');
@@ -27,6 +29,16 @@ T.sumFloat_N_Rank = (1:height(T))' ;
 
 
 T = innerjoin(D , T  , 'key' , 'systematic_name'); 
+ 
+%% save for supplementary table
+T.N_observed_MTDs = T.sumObs ; 
+T.N_predicted_MTDs = T.sumPre ; 
+T.sum_predicted_MHP_score = T.sumFloat ; 
+T.sum_predicted_MHP_score_Rank = T.sumFloat_Rank ; 
+T.sum_predicted_MHP_score_Rank( isnan(T.sum_predicted_MHP_score) ) = NaN ; 
+
+writetable(  T(:,{'gene'  'systematic_name' 'N_observed_MTDs' 'N_predicted_MTDs' 'sum_predicted_MHP_score' 'GeneLength' 'sum_predicted_MHP_score_Rank' 'N_MHPs'} )  ,  '~/Downloads/MTDs_per_gene.xlsx' );
+ 
 %% histogram distribution of MTDs per gene
 fh = figure('units','centimeters','position',[5 5 5 6]);
 hold on ; 
